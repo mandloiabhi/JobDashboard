@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #logoutBtn {
+            cursor: pointer;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .job-container {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .apply-btn {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="jobseeker_homepage.html">Home</a>
+        <div id="logoutBtn">Logout</div>
+    </header>
+    <main>
+        <h1>All Jobs</h1>
+        <div id="jobList"></div>
+    </main>
+
+    <script>
+        // Replace these URLs with your actual backend endpoints
+        //const backendURL = 'https://your-backend-url.com';
+        const logoutURL = `http://127.0.0.1:8008/api/v1/users/logout`;
+        const jobsURL = `http://127.0.0.1:8008/api/v1/users/availableJobs`;
+        const applyURL = `http://127.0.0.1:8008/api/v1/users/applyjob`;
+
+        // Function to send a POST request to the backend
+        const sendPostRequest = async (url, data = {}) => {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials:"include",
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        };
+
+        // Function to fetch jobs and display them
+        const fetchAndDisplayJobs = async () => {
+            const jobListContainer = document.getElementById('jobList');
+            const jobsq = await sendPostRequest(jobsURL);
+            const jobs=jobsq.data;
+            console.log(jobs)
+            console.log(typeof jobs);
+            jobs.forEach(job => {
+                const jobContainer = document.createElement('div');
+                jobContainer.classList.add('job-container');
+                jobContainer.innerHTML = `
+                    <p>Job Name: ${job.title}</p>
+                    <p>Job ID: ${job.job_id}</p>
+                    <p>Company: ${job.company}</p>
+                    <p>Last Date to Apply: ${job.ending_date}</p>
+                    <button class="apply-btn" onclick="applyForJob(${job.job_id})">Apply</button>
+                `;
+                jobListContainer.appendChild(jobContainer);
+
+                const applyButton = jobContainer.querySelector('.apply-btn');
+                applyButton.addEventListener('click', () => {
+                    applyForJob(job.job_id);
+                });
+            });
+        };
+
+        // Function to handle applying for a job
+        const applyForJob = async (jobId) => {
+            console.log("singh is th e");
+             const response = await sendPostRequest(`${applyURL}`,{"jobid":jobId});
+            alert(response.message); // Display response message
+        };
+
+        // Attach event listener to the logout button
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            const response = await sendPostRequest(logoutURL);
+            alert(response.message); // Display response message
+            // Redirect to the login page after logging out
+            window.location.href = 'login.html';
+        });
+
+        // Load jobs when the page is loaded
+        window.addEventListener('load', fetchAndDisplayJobs);
+    </script>
+</body>
+</html>

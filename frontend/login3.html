@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #2ecc71;
+            color: #fff;
+        }
+
+        .error {
+            background-color: #e74c3c;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="string" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="string" id="password" name="password" required>
+
+            <button type="button" class="btn" onclick="submitForm()">Login</button>
+        </form>
+
+        <div id="message" class="message"></div>
+    </div>
+    <script>
+async function submitForm() {
+    const form = document.getElementById("loginForm");
+    const formData = new FormData(form);
+
+    // Assuming you have input fields with name attributes "username" and "password"
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    // Construct the JSON object
+    const jsonData = {
+        "username": username,
+        "password": password
+    };
+
+    try {
+         console.log("singh am");
+       // console.log(jsonData)
+        const response = await fetch("http://127.0.0.1:8008/api/v1/users/login", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            //credentials: 'include',
+            // withCredntials: true,
+            body: JSON.stringify(jsonData),
+        });
+
+        const result = await response.json();
+        const messageElement = document.getElementById("message");
+        if (response.ok) {
+            messageElement.textContent = result.message;
+            messageElement.classList.add("success");
+
+            // Redirect based on the message
+            console.log(result.message)
+            if (result.message === "user loggen in successfully jobseeker") {
+               document.cookie = `accessToken=${result.data.accessToken},refreshToken=${result.data.refreshToken}`
+               window.location.href = "/home/abhijeet/Documents/frontend/jobseeker_homepage.html";
+               console.log(result.data.accessToken);
+            } else if (result.message === "user loggen in successfully jobposter") {
+                window.location.href = "jobposter_homepage.html";
+            } else if (result.message === "TypeC") {
+                window.location.href = "pageC.html";
+            }
+        } else {
+            messageElement.textContent = "Credentials are incorrect. Please try again.";
+            messageElement.classList.add("error");
+        }
+
+        // Rest of the code remains the same...
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #backToHome {
+            cursor: pointer;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        #logoutBtn {
+            cursor: pointer;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .job-container {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" id="backToHome">Home</a>
+        <div id="logoutBtn">Logout</div>
+    </header>
+    <main>
+        <h1>All Jobs</h1>
+        <div id="jobList"></div>
+    </main>
+
+    <script>
+        // Replace these URLs with your actual backend endpoints
+       // const backendURL = 'https://your-backend-url.com';
+        const logoutURL = `http://127.0.0.1:8008/api/v1/users/logout`;
+        const jobsURL = `http://127.0.0.1:8008/api/v1/users/jobstatus`;
+
+        // Function to send a POST request to the backend
+        const sendPostRequest = async (url, data = {}) => {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials:"include",
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        };
+
+        // Function to fetch jobs and display them
+        const fetchAndDisplayJobs = async () => {
+            const jobListContainer = document.getElementById('jobList');
+            const jobsq = await sendPostRequest(jobsURL);
+            const jobs=jobsq.data;
+            jobs.forEach(job => {
+                const jobContainer = document.createElement('div');
+                jobContainer.classList.add('job-container');
+                jobContainer.innerHTML = `
+                    <p>Job Company: ${job.company}</p>
+                    <p>Job Name: ${job.title}</p>
+                    <p>Job ID: ${job.job_id}</p>
+                    <p>Job Status: ${job.status}</p>
+                `;
+                jobListContainer.appendChild(jobContainer);
+            });
+        };
+
+        // Attach event listener to the logout button
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            const response = await sendPostRequest(logoutURL);
+            alert(response.message); // Display response message
+            // Redirect to the login page after logging out
+            window.location.href = 'login.html';
+        });
+
+        // Attach event listener to the back to home link
+        document.getElementById('backToHome').addEventListener('click', () => {
+            // Replace with the actual home page URL
+            window.location.href = 'jobseeker_homepage.html';
+        });
+
+        // Load jobs when the page is loaded
+        window.addEventListener('load', fetchAndDisplayJobs);
+    </script>
+</body>
+</html>
