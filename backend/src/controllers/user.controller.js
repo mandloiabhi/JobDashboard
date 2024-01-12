@@ -132,7 +132,25 @@ const loginUser= asyncHandler(async (req,res)=>{
     secure:true
    }
    
-   return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(new ApiResponse(200,{user:loggedInUser,accessToken,refreshToken},"user loggen in successfully"));
+   let final_message=loggedInUser.role;
+   //const flag=0;
+   if(final_message==='jobseeker')
+   {
+      const jobseeker=await JobSeeker.findOne({Userid:user._id});
+      if(!jobseeker)
+      {
+         final_message="not_jobseeker";
+      }
+   }
+   else
+   {
+    const jobposter=await JobPoster.findOne({Userid:user._id});
+    if(!jobposter)
+    {
+       final_message="not_jobposter";
+    }
+   }
+   return res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(new ApiResponse(200,{user:loggedInUser,accessToken,refreshToken},`${final_message}`));
    
 })
 
