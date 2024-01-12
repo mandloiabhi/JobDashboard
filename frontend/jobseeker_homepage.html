@@ -92,7 +92,7 @@
   window.onload = checkCookies;
         async function logout() {
             try {
-                const response = await fetch("http://127.0.0.1:8008/api/v1/users/logout", {
+                const response = await fetch("/api/v1/users/logout", {
                     method: "POST",
                     //credentials: 'include',
                     headers: {

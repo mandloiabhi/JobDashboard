@@ -62,9 +62,9 @@
     <script>
         // Replace these URLs with your actual backend endpoints
         //const backendURL = 'https://your-backend-url.com';
-        const logoutURL = `http://127.0.0.1:8008/api/v1/users/logout`;
-        const jobsURL = `http://127.0.0.1:8008/api/v1/users/availableJobs`;
-        const applyURL = `http://127.0.0.1:8008/api/v1/users/applyjob`;
+        const logoutURL = `/api/v1/users/logout`;
+        const jobsURL = `/api/v1/users/availableJobs`;
+        const applyURL = `/api/v1/users/applyjob`;
 
         // Function to send a POST request to the backend
         const sendPostRequest = async (url, data = {}) => {

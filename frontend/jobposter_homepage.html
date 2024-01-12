@@ -48,7 +48,7 @@
         }
         async function logout() {
             try {
-                const response = await fetch("http://127.0.0.1:8008/api/v1/users/logout", {
+                const response = await fetch("/api/v1/users/logout", {
                     method: "POST",
                     //credentials: 'include',
                     headers: {
@@ -82,12 +82,12 @@
 
         function goToCreateJobPage() {
             // Example: Redirect to the create job page (replace with your actual logic)
-            window.location.href = "/home/abhijeet/Documents/frontend/createJob.html";
+            window.location.href = "createJob.html";
         }
 
         function goToCreatedJobsPage() {
             // Example: Redirect to the created jobs page (replace with your actual logic)
-            window.location.href = "/home/abhijeet/Documents/frontend/created_job.html";
+            window.location.href = "created_job.html";
         }
     </script>
 
